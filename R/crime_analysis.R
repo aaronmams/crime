@@ -74,3 +74,38 @@ ggplot(subset(crime,state %in% c("NJ","NY","MA","IL","CA")),aes(x=year,y=murder_
   theme_bw()
 
 #------------------------------------------------------------------------------
+
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+##############################################################################################
+# Let's look at just the New York Data because they have a pretty nice data set 
+# on crime across all areas of the state
+
+ny.crime <- read.csv("data/arrests_NY.txt")
+
+names(ny.crime) <- c('county','year','total','felony_total','drug_felony','violent_felony','dwi_felony','other_felony',
+                     'mis_total','drug_mis','dwi_mis','prop_mis','oth_mis')
+
+#get county populations
+albany <- Quandl("FRED/NYALBA1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+essex <- Quandl("FRED/NYESSE1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+new_york_county <- Quandl("FRED/NYNEWY1POP", api_key="1i2uuiN7DQ-Ltizgjb_q") #nyc
+kings <- Quandl("FRED/NYKING7POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  #nyc
+queens <- Quandl("FRED/NYQUEE1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  # nyc
+bronx <- Quandl("FRED/NYBRON5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  #nyc
+richmond <- Quandl("FRED/NYRICH5POP", api_key="1i2uuiN7DQ-Ltizgjb_q") #nyc
+schenectady <- Quandl("FRED/NYSCHE5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+cayuga <- Quandl("FRED/NYCAYU5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+allegany <- Quandl("FRED/NYALLE2POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+erie <- Quandl("FRED/NYERIE9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop density
+nassau <- Quandl("FRED/NYNASS9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+rockland <- Quandl("FRED/NYROCK5POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+westchester <- Quandl("FRED/NYWEST9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+
+
+
