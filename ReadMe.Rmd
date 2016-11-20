@@ -1,0 +1,25 @@
+---
+title: "crime data"
+author: "aaron mamula"
+date: "11/20/2016"
+output: html_document
+---
+
+
+## Data
+
+I was able to compile data on crime from a few different sources.
+
+1. State-level felony crimes are available from the FBI's Uniform Crime Reporting system.  I pull these data directly from Quandl.  The Quandl series for New York is [FBI_UCR/NEW_YORK](https://www.quandl.com/data/FBI_UCR/NEW_YORK-Estimated-Crime-In-New-York)
+
+2. State-level unemployment rates come from the St. Louis Federal Reserve Database (FRED)...but I also pull these using Quandl.  Quandl has these data available from a few different databases (BLS and FRED both supply them).  I prefer pulling from the [FRED database in Quandl]( https://www.quandl.com/data/FRBC/UNEMP_ST_CA-Unemployment-California).
+
+3.  County-by-County population numbers (which are used to normalize crime by population) also come from Quandl.  At the moment I only need these for [New York]((https://www.quandl.com/data/FRED/NYNEWY1POP-Resident-Population-in-New-York-County-NY) and California because those are the only states that I have county-level crime reports. 
+
+4. The remaining data come from a mis-mash of websites where I downloaded individual text files:
+
+* The FBI's UCR allows download of major crimes for big cities.  Frustratingly, I had to pull separately fro cities over 500,000 residents and cities over 1,000,000 residents.  Also frustratingly, I had to choose between getting multiple crime series (aggravated assault, murder, felony larceny, etc) for a single city...or multiple cities for a single crime series.  The text file "data/crime_bigcities_clean" has the "all violent crimes" series for cities over 1,000,000 resident from 1985-2012.
+
+* The text file "data/LocalCrime.csv" has the series "all violent crime" for cities over 500,000 residents from 1985 to 2012.
+
+* 
