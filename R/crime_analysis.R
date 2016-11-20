@@ -1,6 +1,8 @@
 library(Quandl)
 library(dplyr)
 library(ggplot2)
+library(lubridate)
+library(plm)
 
 
 #----------------------------------------------------------------
@@ -63,7 +65,7 @@ crime <- tbl_df(crime)
 crime <- crime %>% mutate(murder_cap=murder/(pop/100000))
 ggplot(crime,aes(x=year,y=murder_cap,color=state)) + geom_line() 
 
-#show NY only 
+#show a few states together
 ggplot(subset(crime,state %in% c("NJ","NY","MA","IL","CA")),aes(x=year,y=murder_cap,color=state)) + geom_line() + 
   geom_point() + geom_rect(aes(xmin=as.Date('1982-12-31'),
                                xmax=as.Date('1983-12-31'),ymin=-Inf,ymax=+Inf),fill='pink',alpha=0.02) + 
@@ -93,19 +95,69 @@ names(ny.crime) <- c('county','year','total','felony_total','drug_felony','viole
 
 #get county populations
 albany <- Quandl("FRED/NYALBA1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+albany$county='Albany'
+
 essex <- Quandl("FRED/NYESSE1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+essex$county='Essex'
+
 new_york_county <- Quandl("FRED/NYNEWY1POP", api_key="1i2uuiN7DQ-Ltizgjb_q") #nyc
+new_york_county$county='New York'
+
 kings <- Quandl("FRED/NYKING7POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  #nyc
+kings$county = 'Kings'
+
 queens <- Quandl("FRED/NYQUEE1POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  # nyc
+queens$county = 'Queens'
+
 bronx <- Quandl("FRED/NYBRON5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")  #nyc
+bronx$county = 'Bronx'
+
 richmond <- Quandl("FRED/NYRICH5POP", api_key="1i2uuiN7DQ-Ltizgjb_q") #nyc
-schenectady <- Quandl("FRED/NYSCHE5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+richmond$county='Richmond'
+
+#schenectady <- Quandl("FRED/NYSCHE5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+#schenectday$county = 'schenectday'
+
 cayuga <- Quandl("FRED/NYCAYU5POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+cayuga$county = 'Cayuga'
+
 allegany <- Quandl("FRED/NYALLE2POP", api_key="1i2uuiN7DQ-Ltizgjb_q")
+allegany$county = 'Allegany'
+
 erie <- Quandl("FRED/NYERIE9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop density
+erie$county = 'Erie'
+
 nassau <- Quandl("FRED/NYNASS9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+nassau$county = 'Nassau'
+
 rockland <- Quandl("FRED/NYROCK5POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+rockland$county = 'Rockland'
+
 westchester <- Quandl("FRED/NYWEST9POP", api_key="1i2uuiN7DQ-Ltizgjb_q") # high pop den
+westchester$county = 'Westchester'
+
+pop <- tbl_df(rbind(albany,essex,new_york_county,kings,queens,bronx,richmond,cayuga,allegany,
+             erie,nassau,rockland,westchester)) %>% mutate(year=year(DATE))
+
+#first let's look at violent crime in NYC counties
+nyc.crime <- tbl_df(ny.crime) %>% filter(county %in% c('New York','Kings','Queens','Bronx','Richmond')) %>%
+              inner_join(pop,by=c('county','year')) %>% 
+              mutate(violent_pc=violent_felony/VALUE)
+
+ggplot(nyc.crime,aes(x=year,y=violent_pc,color=county)) + geom_line() + geom_point() + 
+  ylab("violent felony per capita") + theme_bw()
+
+
+
+#add in a few more of the urban counties and run a panel fixed effects model of violent crime explained
+# by misdemeanor arrest
+fe.df <- tbl_df(ny.crime) %>% filter(county %in% c('New York','Kings','Queens','Bronx','Richmond',
+                                           'Westchester','Rockland','Nassau','Erie')) %>%
+        inner_join(pop,by=c('county','year')) %>%
+        mutate(drug_pc=drug_felony/VALUE,violent_pc=violent_felony/VALUE,mis=mis_total/VALUE)
+
+summary(plm(violent_pc ~ mis, data=fe.df, index=c("county", "year"), model="within"))
+summary(plm(violent_pc ~ mis, data=fe.df[fe.df$year>1985,], index=c("county", "year"), model="within"))
 
 
 
