@@ -22,4 +22,13 @@ I was able to compile data on crime from a few different sources.
 
 * The text file "data/LocalCrime.csv" has the series "all violent crime" for cities over 500,000 residents from 1985 to 2012.
 
-* 
+* The data on number of police employed by state over time (which shows up as an explanatory/control variable in several of the "broken windows" regression studies) was a real pain in the ass to get.  I'm still looking for better data on this variable.  Currently, I have number of police employed from the BEA's Quarterly Census of Employment and Wages, which I queried for individual states.  The available time-series that I found only spanned 2005 - 2015.  
+
+  * these files are named things like "data/ma_police.csv" for MA
+  * "data/nj_police.csv" for NJ
+  * "data/ohio_police.csv"
+
+* Finally, the two county-level crime data sets I found are
+
+  * California: "data/CA_arrest_data_2005-2014.csv"...in order to make sense of these you will also need the list of arrest codes I downloaded from the California Attorney General's Office: "data/arrest_offense_codes.pdf"
+  * New York: "data/arrests_NY.txt".  These data are more plug-and-play than the CA data. 
